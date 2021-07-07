@@ -3,7 +3,6 @@ package com.shredder.example.aws.s3;
 import com.shredder.example.aws.s3.util.PropertyReader;
 import org.apache.commons.io.FileUtils;
 import software.amazon.awssdk.core.ResponseBytes;
-import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.waiters.WaiterResponse;
 import software.amazon.awssdk.regions.Region;
@@ -15,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.*;
@@ -172,7 +170,7 @@ public class S3Helper {
 
         if (!FileUtils.isDirectory(new File(outputFileDir))) {
             System.out.println("INVALID FILE STORAGE DIR");
-            return null;
+            return Optional.empty();
         }
 
         try {
@@ -200,5 +198,14 @@ public class S3Helper {
         }
     }
 
-
+    public boolean isFileExists(String bucketName, String keyOrPath, String fileName) {
+        try {
+            HeadObjectResponse headResponse = awsClient
+                    .headObject(HeadObjectRequest.builder().bucket(bucketName).key(keyOrPath.concat(fileName)).build());
+            System.out.println(headResponse);
+            return true;
+        } catch (NoSuchKeyException e) {
+            return false;
+        }
+    }
 }
