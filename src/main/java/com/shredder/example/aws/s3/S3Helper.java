@@ -208,4 +208,16 @@ public class S3Helper {
             return false;
         }
     }
+
+    public boolean isBucketExists(String bucketName) {
+        HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
+                .bucket(bucketName)
+                .build();
+        try {
+            awsClient.headBucket(headBucketRequest);
+            return true;
+        } catch (NoSuchBucketException e) {
+            return false;
+        }
+    }
 }
