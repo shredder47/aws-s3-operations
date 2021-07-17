@@ -49,6 +49,9 @@ public class S3Helper {
 
 
     // Create a bucket by using a S3Waiter object
+    
+    /*Basically this function is creating a bucket in aws s3. Inside this function, everything is kept under try catch block so, that if the bucket is already there with the same name then it will
+    display the error message*/
     public void createBucket(String bucketName) {
 
         try {
