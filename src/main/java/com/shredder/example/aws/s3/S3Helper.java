@@ -55,7 +55,7 @@ public class S3Helper {
      * will be stored so it is necessary to create bucket. In this function first we are creating the object then
      * by the help of that object we are creating the bucket. Everything is put under try catch block so that if any
      * exception occurs it will display the message. Chance of occurring the error is when the bucket is already
-     * there with the same name.
+     * there with the same name. Other errors can also occur.
      * @param bucketName
      */
     public void createBucket(String bucketName) {
