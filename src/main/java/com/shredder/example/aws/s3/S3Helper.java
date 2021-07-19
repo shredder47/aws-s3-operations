@@ -150,7 +150,7 @@ public class S3Helper {
     /**
      * This function uploads item to the bucket. The file is ultimately stored in the given path name.
      * @param bucketName aditya123
-     * @param keyOrPath aditya123/folder1/
+     * @param keyOrPath /folder1/
      * @param sourceFilePath D:\Spring apps\demo
      * @throws IOException
      */
@@ -189,7 +189,7 @@ public class S3Helper {
      * This function returns url of the file stored in a bucket. Here request and url is a object. GetUrlRequest
      * is a built in library.
      * @param bucketName aditya123
-     * @param keyOrPath aditya123/folder1/
+     * @param keyOrPath /folder1/
      * @param fileName chotu98
      * @return
      */
@@ -257,7 +257,7 @@ public class S3Helper {
      * This function will just result boolean value that is true or false. If the file exists in the bucket
      * then it will print true otherwise false.
      * @param bucketName cbnits
-     * @param keyOrPath aditya123/folder1/
+     * @param keyOrPath /folder1/
      * @param fileName springmap
      * @return
      */
