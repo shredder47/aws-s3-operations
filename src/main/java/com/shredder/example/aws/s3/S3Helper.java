@@ -141,7 +141,11 @@ public class S3Helper {
         String newFileName = path.getFileName().toString();
         uploadItemToBucket(bucketName, keyOrPath, newFileName, sourceFilePath);
     }
-
+    //bucketName: requires proper bucket name for file to be uploaded
+    //sourceFilePath: requires proper directory/address of the stored file
+    //keyOrPath: Provide unique identifier for the item/file to be stored
+    //newFileName: Provide the file name
+    //consider -> https://docs.amazonaws.cn/en_us/AmazonS3/latest/userguide/Welcome.html#BasicsKeys
     public void uploadItemToBucket(String bucketName, String keyOrPath, String newFileName, String sourceFilePath) throws IOException {
 
         Path path = Path.of(sourceFilePath);
@@ -155,8 +159,11 @@ public class S3Helper {
                 .metadata(metadata)
                 .build();
 
+        //create instance of java.nio.file package to locate the path of the source file
         File file = new File(sourceFilePath);
 
+        //convert file into array of bytes
+        //Byte Array to store the data of the file
         byte[] fileDataBytes = FileUtils.readFileToByteArray(file);
         ByteBuffer byteBuffer = ByteBuffer.wrap(fileDataBytes);
 
@@ -165,6 +172,9 @@ public class S3Helper {
         System.out.println("File -> ".concat(path.getFileName().toString()).concat(" was uploaded successfully as ".concat(newFileName)));
     }
 
+    /*getURL: to fetch URL of the file stored in the bucket
+     * e.g.: https://doc.s3.amazonaws.com/2006-03-01/AmazonS3.wsdl
+     * in the aforesaid url:- doc is the bucket name, 2006-03-01 keyOrPath & AmazonS3.wsdl is the filename */
     public Optional<String> getURL(String bucketName, String keyOrPath, String fileName) {
 
         try {
@@ -182,9 +192,11 @@ public class S3Helper {
             return Optional.empty();
         }
     }
-
+    //downloads required item or files from intended bucket
+    //provide proper key
     public Optional<String> downloadItemFromBucket(String bucketName, String keyOrPath, String downloadFileName, String outputFileDir) {
 
+        //if the directory/location of the file is not found then displays the message for invalid directory
         if (!FileUtils.isDirectory(new File(outputFileDir))) {
             System.out.println("INVALID FILE STORAGE DIR");
             return Optional.empty();
@@ -198,15 +210,21 @@ public class S3Helper {
                     .build();
 
             ResponseBytes<GetObjectResponse> objectBytes = awsClient.getObjectAsBytes(objectRequest);
+
+            //file is stored as bytes in an array of bytes
             byte[] dataByteArr = objectBytes.asByteArray();
+            //directory and name of the downloaded file is merged with default file system name separated by characters
             File outputFile = new File(outputFileDir.concat(FileSystems.getDefault().getSeparator()).concat(downloadFileName));
             FileUtils.writeByteArrayToFile(outputFile, dataByteArr);
 
 
             System.out.println("File " + downloadFileName + " is downloaded and stored successfully at " + outputFileDir);
+            //returns filename along with its path/location
             return Optional.of(new File(outputFileDir + FileSystems.getDefault().getSeparator() + downloadFileName).getAbsolutePath());
 
-        } catch (IOException ex) {
+        }
+        //Exception for mismatch filename or bucket name is handled
+        catch (IOException ex) {
             ex.printStackTrace();
             return Optional.empty();
         } catch (S3Exception e) {
@@ -214,18 +232,26 @@ public class S3Helper {
             return Optional.empty();
         }
     }
-
+    //this method works for existing file
+    //if it exists in the required bucket and in tne key path
+    //with the intended file name
+    //then returns true for its existence
     public boolean isFileExists(String bucketName, String keyOrPath, String fileName) {
         try {
             HeadObjectResponse headResponse = awsClient
                     .headObject(HeadObjectRequest.builder().bucket(bucketName).key(keyOrPath.concat(fileName)).build());
             System.out.println(headResponse);
             return true;
-        } catch (NoSuchKeyException e) {
+        }
+        //mismatch of key name is handled with existence falsified
+        catch (NoSuchKeyException e) {
             return false;
         }
     }
-
+    //this method works for existing bucket
+    //if it exists in the required bucket and in tne key path
+    //with the intended file name
+    //then returns true for its existence
     public boolean isBucketExists(String bucketName) {
         HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
                 .bucket(bucketName)
