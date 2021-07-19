@@ -49,6 +49,19 @@ public class S3Helper {
 
 
     // Create a bucket by using a S3Waiter object
+
+    /**
+     * It is a Create function through by which we create a bucket in AWS S3.Bucket is safe place to store files in it.
+     * It store 0byte to 5TB storage.Files are stored in form of Bucket so we are create a Bucket.
+     * In this below function first we create a Object after with the help of Object we create a Bucket.
+     * we put Try Catch Block in Code .In try block we Create a request to build a Bucket.
+     * In bucket(give the name of bucket which we want to give) we give the name of bucket.
+     * Build is use to build the CreateBucketRequest.
+     * In the catch block if there is any exception is occurs then it will print error message.
+     * If we give same name to bucket name they print error.
+     * By the help of awsClient we can access our bucket from any Location using a Vpn.
+     * @param bucketName(which we want to gives Suppose its CBNITS)
+     */
     public void createBucket(String bucketName) {
 
         try {
@@ -64,6 +77,14 @@ public class S3Helper {
 
 
             // Wait until the bucket is created and print out the response
+
+            /**
+             *WaiterResponse is a library by which we wait for the Bucket to be Created.
+             * waiterResponse first wait to create a bucket from Create bucketRequest after it build bucketName.
+             * after it go to bucketRequest wait then it wait whenever the bucket is build.
+             * After build bucket name it get Response.
+             * Bucket name +"is ready"
+             */
             WaiterResponse<HeadBucketResponse> waiterResponse = s3Waiter.waitUntilBucketExists(bucketRequestWait);
             waiterResponse.matched().response().ifPresent(System.out::println);
             System.out.println(bucketName + " is ready");
@@ -73,6 +94,13 @@ public class S3Helper {
         }
     }
 
+    // listAllBucket
+
+    /**
+     * this below function is used for print name of all the bucket which is present in our basket
+     * this will print all the bucket name by use of listBucketRequest which is first first and after response and
+     * print all the bucket name
+     */
     public void listAllBuckets() {
         ListBucketsRequest listBucketsRequest = ListBucketsRequest.builder().build();
         ListBucketsResponse listBucketsResponse = awsClient.listBuckets(listBucketsRequest);
@@ -81,6 +109,14 @@ public class S3Helper {
                 .forEach(res -> System.out.println(res.name()));
     }
 
+    // Delete Empty bucket
+
+    /**
+     * the below function is used for delete empty bucket
+     * take it into try Catch block  in that it will deletebucketRequest is build and delete with awsClient
+     * Catch block show if any error occur then print with some exception.
+     * @param bucketName CBNITS
+     */
     public void deleteEmptyBucket(String bucketName) {
         try {
             DeleteBucketRequest deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName).build();
@@ -90,7 +126,16 @@ public class S3Helper {
         }
 
     }
+    // Delete Item From Bucket
 
+    /**
+     * the below function is used for Delete Item From Bucket by using try Catch Block
+     * First it check those item Delete is in list or not by the name
+     * If it is find then it will get deleted
+     * Otherwise it will print error message
+     * @param bucketName CBNITS
+     * @param itemName(any)
+     */
     public void deleteItemFromBucket(String bucketName, String itemName) {
 
         List<ObjectIdentifier> deleteItems = new ArrayList<>();
@@ -119,6 +164,16 @@ public class S3Helper {
     }
 
 
+    //Update item To Bucket
+
+    /**
+     * the below function is used for Update the Item in the Bucket
+     * If we Update any Item in bucket then It will automatically stored in the same file name which we allocated their path
+     * @param bucketName CBNITS
+     * @param keyOrPath
+     * @param sourceFilePath
+     * @throws IOException
+     */
     public void uploadItemToBucket(String bucketName, String keyOrPath, String sourceFilePath) throws IOException {
         Path path = Path.of(sourceFilePath);
         String newFileName = path.getFileName().toString();
@@ -148,6 +203,19 @@ public class S3Helper {
         System.out.println("File -> ".concat(path.getFileName().toString()).concat(" was uploaded successfully as ".concat(newFileName)));
     }
 
+    // GetUrl
+
+    /**
+     * this below function is used to get the Url File Name
+     * Url is used as an Object to build GetUrl request
+     * this will print "The URL for +file name+ is + URL"
+     * other wise it will print error details or null.
+     * @param bucketName CBNITS
+     * @param keyOrPath (File directory Path)
+     * @param fileName (any)
+     * @return
+     */
+
     public Optional<String> getURL(String bucketName, String keyOrPath, String fileName) {
 
         try {
@@ -166,6 +234,19 @@ public class S3Helper {
         }
     }
 
+    // Download Item From Bucket
+
+    /**
+     * the below function is used for Download Item from the Bucket by the use of Try or catch
+     *First it get to awsClient and search it then find then Download Item
+     * if item is not in List then it will print some error message with detail or empty
+     * it will print Invalid File Storage Directory
+     * @param bucketName CBNITS
+     * @param keyOrPath (File directory Path)
+     * @param downloadFileName
+     * @param outputFileDir
+     * @return
+     */
     public Optional<String> downloadItemFromBucket(String bucketName, String keyOrPath, String downloadFileName, String outputFileDir) {
 
         if (!FileUtils.isDirectory(new File(outputFileDir))) {
@@ -198,6 +279,18 @@ public class S3Helper {
         }
     }
 
+    //Is File Exist
+
+    /**
+     * the below function is used only for IsFile Exit or not
+     * this will take boolean Output True or false
+     * If the file is present then it will print true
+     * If the file is not there then it will print false
+     * @param bucketName CBNITS
+     * @param keyOrPath (File directory Path)
+     * @param fileName
+     * @return
+     */
     public boolean isFileExists(String bucketName, String keyOrPath, String fileName) {
         try {
             HeadObjectResponse headResponse = awsClient
@@ -209,6 +302,16 @@ public class S3Helper {
         }
     }
 
+    // Is Bucket Exist
+
+    /**
+     * the below function is used only for IsBucket Exit or not
+     * this will take boolean Output True or false
+     * If the Bucket is present then it will print true
+     * If the bucket is not there then it will print false
+     * @param bucketName CBNITS
+     * @return
+     */
     public boolean isBucketExists(String bucketName) {
         HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
                 .bucket(bucketName)
