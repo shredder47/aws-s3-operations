@@ -215,7 +215,7 @@ public class S3Helper {
      * This function downloads the file from the bucket. If the path is empty then it will print invalid file
      * storage directory.
      * @param bucketName aditya123
-     * @param keyOrPath aditya123/folder1/
+     * @param keyOrPath /folder1/
      * @param downloadFileName springmap
      * @param outputFileDir D:\Download
      * @return
