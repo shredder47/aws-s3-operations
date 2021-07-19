@@ -25,6 +25,11 @@ public class S3Helper {
     private static S3Helper awsHelper = null;
     private S3Client awsClient;
 
+    /*instance of PropertyReader class is invoked
+     * new instance of PropertyReader class will be created if encountered null
+     * object for awsClient is created
+     * storage created of region us-east-2
+     * unusual exception will be handled in catch block*/
     private S3Helper() {
         try {
 
@@ -39,7 +44,9 @@ public class S3Helper {
             ex.printStackTrace();
         }
     }
-
+    /*Object of S3Helper for the method getInstance will be created dynamically by invoking
+     * S3Helper constructor if encountered as null and
+     * the instance will be returned once created   */
     public static synchronized S3Helper getInstance() {
         if (awsHelper == null) {
             awsHelper = new S3Helper();
@@ -63,16 +70,19 @@ public class S3Helper {
                     .build();
 
 
-            // Wait until the bucket is created and print out the response
+            /* if the required bucket created or already present matches, the response of the bucket created will be displayed
+             * else will wait until the bucket is created and will display the response once generated */
             WaiterResponse<HeadBucketResponse> waiterResponse = s3Waiter.waitUntilBucketExists(bucketRequestWait);
             waiterResponse.matched().response().ifPresent(System.out::println);
             System.out.println(bucketName + " is ready");
 
-        } catch (S3Exception e) {
+        }
+        // display error message if exception incurred
+        catch (S3Exception e) {
             System.err.println(e.awsErrorDetails().errorMessage());
         }
     }
-
+    //this method will print the names for each of the of buckets created in a list
     public void listAllBuckets() {
         ListBucketsRequest listBucketsRequest = ListBucketsRequest.builder().build();
         ListBucketsResponse listBucketsResponse = awsClient.listBuckets(listBucketsRequest);
@@ -81,16 +91,21 @@ public class S3Helper {
                 .forEach(res -> System.out.println(res.name()));
     }
 
+    // deleteEmptyBucket method deletes the bucket(possibly empty) according to the bucket name passed as argument
     public void deleteEmptyBucket(String bucketName) {
         try {
             DeleteBucketRequest deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName).build();
             awsClient.deleteBucket(deleteBucketRequest);
-        } catch (Exception exception) {
+        }
+        //handles exception if the bucket is not found with an error message
+        catch (Exception exception) {
             System.err.println(exception.getMessage());
         }
 
     }
-
+    /*List of stored items as intended are removed from the required bucket
+     * (: mention proper item names to be identified)
+     * (: mention proper bucket name)*/
     public void deleteItemFromBucket(String bucketName, String itemName) {
 
         List<ObjectIdentifier> deleteItems = new ArrayList<>();
@@ -101,7 +116,7 @@ public class S3Helper {
                         .key(itemName)
                         .build()
         );
-
+        //requires correct bucket name and item names to delete items
         try {
             Delete deleteInfo = Delete.builder().objects(deleteItems).build();
 
@@ -112,7 +127,9 @@ public class S3Helper {
 
             awsClient.deleteObjects(deleteObjectsRequest);
 
-        } catch (S3Exception e) {
+        }
+        // else incurs an error message for wrong details
+        catch (S3Exception e) {
             System.err.println(e.awsErrorDetails().errorMessage());
         }
         System.out.println("Deleting Successful");
