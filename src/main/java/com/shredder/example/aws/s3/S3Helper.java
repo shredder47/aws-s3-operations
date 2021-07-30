@@ -49,6 +49,16 @@ public class S3Helper {
 
 
     // Create a bucket by using a S3Waiter object
+
+    /**
+     * Basically this is a create function through we are creating a bucket in the aws s3. In bucket everything
+     * will be stored so it is necessary to create bucket. In this function first we are creating the object then
+     * by the help of that object we are creating the bucket. Everything is put under try catch block so that if any
+     * exception occurs it will display the message. Chance of occurring the error is when the bucket is already
+     * there with the same name. Other errors can also occur.The name of the bucket is bucketName
+     * which is in the 67 line number.
+     * @param bucketName cbnits
+     */
     public void createBucket(String bucketName) {
 
         try {
@@ -64,6 +74,11 @@ public class S3Helper {
 
 
             // Wait until the bucket is created and print out the response
+
+            /**
+             * WaiterResponse is a library through which it waits for the bucket to be created. As soon as
+             * bucket is created it will display the message bucket is ready.
+             */
             WaiterResponse<HeadBucketResponse> waiterResponse = s3Waiter.waitUntilBucketExists(bucketRequestWait);
             waiterResponse.matched().response().ifPresent(System.out::println);
             System.out.println(bucketName + " is ready");
@@ -73,6 +88,9 @@ public class S3Helper {
         }
     }
 
+    /**
+     * This function prints the name of all the buckets present in the s3 storage.
+     */
     public void listAllBuckets() {
         ListBucketsRequest listBucketsRequest = ListBucketsRequest.builder().build();
         ListBucketsResponse listBucketsResponse = awsClient.listBuckets(listBucketsRequest);
@@ -81,6 +99,10 @@ public class S3Helper {
                 .forEach(res -> System.out.println(res.name()));
     }
 
+    /**
+     * This function deletes all the empty buckets and it is put under try catch block because it may throw an error.
+     * @param bucketName cbnits
+     */
     public void deleteEmptyBucket(String bucketName) {
         try {
             DeleteBucketRequest deleteBucketRequest = DeleteBucketRequest.builder().bucket(bucketName).build();
@@ -90,6 +112,13 @@ public class S3Helper {
         }
 
     }
+
+    /**
+     * This function deletes the item from the bucket. Item name is matched with the stored item name, if matched
+     * successfully then item is deleted otherwise displays error message.
+     * @param bucketName cbnits
+     * @param itemName springmap
+     */
 
     public void deleteItemFromBucket(String bucketName, String itemName) {
 
@@ -117,6 +146,14 @@ public class S3Helper {
         }
         System.out.println("Deleting Successful");
     }
+
+    /**
+     * This function uploads item to the bucket. The file is ultimately stored in the given path name.
+     * @param bucketName aditya123
+     * @param keyOrPath /folder1/
+     * @param sourceFilePath D:\Spring apps\demo
+     * @throws IOException
+     */
 
 
     public void uploadItemToBucket(String bucketName, String keyOrPath, String sourceFilePath) throws IOException {
@@ -148,6 +185,14 @@ public class S3Helper {
         System.out.println("File -> ".concat(path.getFileName().toString()).concat(" was uploaded successfully as ".concat(newFileName)));
     }
 
+    /**
+     * This function returns url of the file stored in a bucket. Here request and url is a object. GetUrlRequest
+     * is a built in library.
+     * @param bucketName aditya123
+     * @param keyOrPath /folder1/
+     * @param fileName chotu98
+     * @return
+     */
     public Optional<String> getURL(String bucketName, String keyOrPath, String fileName) {
 
         try {
@@ -165,6 +210,16 @@ public class S3Helper {
             return Optional.empty();
         }
     }
+
+    /**
+     * This function downloads the file from the bucket. If the path is empty then it will print invalid file
+     * storage directory.
+     * @param bucketName aditya123
+     * @param keyOrPath /folder1/
+     * @param downloadFileName springmap
+     * @param outputFileDir D:\Download
+     * @return
+     */
 
     public Optional<String> downloadItemFromBucket(String bucketName, String keyOrPath, String downloadFileName, String outputFileDir) {
 
@@ -198,6 +253,15 @@ public class S3Helper {
         }
     }
 
+    /**
+     * This function will just result boolean value that is true or false. If the file exists in the bucket
+     * then it will print true otherwise false.
+     * @param bucketName cbnits
+     * @param keyOrPath /folder1/
+     * @param fileName springmap
+     * @return
+     */
+
     public boolean isFileExists(String bucketName, String keyOrPath, String fileName) {
         try {
             HeadObjectResponse headResponse = awsClient
@@ -208,6 +272,13 @@ public class S3Helper {
             return false;
         }
     }
+
+    /**
+     * This function will also result boolean value but this time for the bucket. If the bucket exists then true
+     * otherwise false.
+     * @param bucketName cbnits
+     * @return
+     */
 
     public boolean isBucketExists(String bucketName) {
         HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
